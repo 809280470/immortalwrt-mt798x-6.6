@@ -5,7 +5,7 @@ Subject: [PATCH] backport: netfilter: conntrack: remove UDP-Lite conntrack suppo
 ---
 --- a/include/net/netfilter/ipv4/nf_conntrack_ipv4.h
 +++ b/include/net/netfilter/ipv4/nf_conntrack_ipv4.h
-@@ -19,9 +19,6 @@
+@@ -19,9 +19,6 @@ extern const struct nf_conntrack_l4proto
  #ifdef CONFIG_NF_CT_PROTO_SCTP
  extern const struct nf_conntrack_l4proto nf_conntrack_l4proto_sctp;
  #endif
@@ -17,7 +17,7 @@ Subject: [PATCH] backport: netfilter: conntrack: remove UDP-Lite conntrack suppo
  #endif
 --- a/include/net/netfilter/nf_conntrack_l4proto.h
 +++ b/include/net/netfilter/nf_conntrack_l4proto.h
-@@ -107,11 +107,6 @@
+@@ -107,11 +107,6 @@ int nf_conntrack_udp_packet(struct nf_co
  			    unsigned int dataoff,
  			    enum ip_conntrack_info ctinfo,
  			    const struct nf_hook_state *state);
@@ -29,7 +29,7 @@ Subject: [PATCH] backport: netfilter: conntrack: remove UDP-Lite conntrack suppo
  int nf_conntrack_tcp_packet(struct nf_conn *ct,
  			    struct sk_buff *skb,
  			    unsigned int dataoff,
-@@ -145,8 +140,6 @@
+@@ -145,8 +140,6 @@ void nf_conntrack_icmpv6_init_net(struct
  /* Existing built-in generic protocol */
  extern const struct nf_conntrack_l4proto nf_conntrack_l4proto_generic;
  
@@ -38,10 +38,9 @@ Subject: [PATCH] backport: netfilter: conntrack: remove UDP-Lite conntrack suppo
  const struct nf_conntrack_l4proto *nf_ct_l4proto_find(u8 l4proto);
  
  /* Generic netlink helpers */
-diff -urN a/net/netfilter/Kconfig b/net/netfilter/Kconfig
---- a/net/netfilter/Kconfig	2026-06-21 16:02:22.126551404 +0800
-+++ b/net/netfilter/Kconfig	2026-06-21 16:07:43.680696804 +0800
-@@ -219,17 +219,6 @@
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -219,17 +219,6 @@ config NF_CT_PROTO_SCTP
  
  	  If unsure, say Y.
  
@@ -59,10 +58,9 @@ diff -urN a/net/netfilter/Kconfig b/net/netfilter/Kconfig
  config NF_CONNTRACK_AMANDA
  	tristate "Amanda backup protocol support"
  	depends on NETFILTER_ADVANCED
-diff -urN a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
---- a/net/netfilter/nf_conntrack_core.c	2026-06-21 16:02:22.566352343 +0800
-+++ b/net/netfilter/nf_conntrack_core.c	2026-06-21 16:08:05.470605565 +0800
-@@ -327,9 +327,6 @@
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -327,9 +327,6 @@ nf_ct_get_tuple(const struct sk_buff *sk
  #endif
  	case IPPROTO_TCP:
  	case IPPROTO_UDP:
@@ -72,7 +70,7 @@ diff -urN a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.
  #ifdef CONFIG_NF_CT_PROTO_SCTP
  	case IPPROTO_SCTP:
  #endif
-@@ -1950,11 +1947,6 @@
+@@ -1950,11 +1947,6 @@ static int nf_conntrack_handle_packet(st
  	case IPPROTO_ICMPV6:
  		return nf_conntrack_icmpv6_packet(ct, skb, ctinfo, state);
  #endif
@@ -84,10 +82,9 @@ diff -urN a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.
  #ifdef CONFIG_NF_CT_PROTO_SCTP
  	case IPPROTO_SCTP:
  		return nf_conntrack_sctp_packet(ct, skb, dataoff,
-diff -urN a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_proto.c
---- a/net/netfilter/nf_conntrack_proto.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nf_conntrack_proto.c	2026-06-21 16:08:29.698611872 +0800
-@@ -106,9 +106,6 @@
+--- a/net/netfilter/nf_conntrack_proto.c
++++ b/net/netfilter/nf_conntrack_proto.c
+@@ -106,9 +106,6 @@ const struct nf_conntrack_l4proto *nf_ct
  #ifdef CONFIG_NF_CT_PROTO_SCTP
  	case IPPROTO_SCTP: return &nf_conntrack_l4proto_sctp;
  #endif
@@ -97,10 +94,9 @@ diff -urN a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_prot
  #ifdef CONFIG_NF_CT_PROTO_GRE
  	case IPPROTO_GRE: return &nf_conntrack_l4proto_gre;
  #endif
-diff -urN a/net/netfilter/nf_conntrack_proto_udp.c b/net/netfilter/nf_conntrack_proto_udp.c
---- a/net/netfilter/nf_conntrack_proto_udp.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nf_conntrack_proto_udp.c	2026-06-21 16:09:21.130836091 +0800
-@@ -129,91 +129,6 @@
+--- a/net/netfilter/nf_conntrack_proto_udp.c
++++ b/net/netfilter/nf_conntrack_proto_udp.c
+@@ -129,91 +129,6 @@ int nf_conntrack_udp_packet(struct nf_co
  	return NF_ACCEPT;
  }
  
@@ -192,7 +188,7 @@ diff -urN a/net/netfilter/nf_conntrack_proto_udp.c b/net/netfilter/nf_conntrack_
  #ifdef CONFIG_NF_CONNTRACK_TIMEOUT
  
  #include <linux/netfilter/nfnetlink.h>
-@@ -299,26 +214,3 @@
+@@ -299,26 +214,3 @@ const struct nf_conntrack_l4proto nf_con
  	},
  #endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
  };
@@ -219,10 +215,9 @@ diff -urN a/net/netfilter/nf_conntrack_proto_udp.c b/net/netfilter/nf_conntrack_
 -#endif /* CONFIG_NF_CONNTRACK_TIMEOUT */
 -};
 -#endif
-diff -urN a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
---- a/net/netfilter/nf_conntrack_standalone.c	2026-06-21 16:02:22.566352343 +0800
-+++ b/net/netfilter/nf_conntrack_standalone.c	2026-06-21 16:09:40.899919931 +0800
-@@ -65,7 +65,6 @@
+--- a/net/netfilter/nf_conntrack_standalone.c
++++ b/net/netfilter/nf_conntrack_standalone.c
+@@ -65,7 +65,6 @@ print_tuple(struct seq_file *s, const st
  			   ntohs(tuple->src.u.tcp.port),
  			   ntohs(tuple->dst.u.tcp.port));
  		break;
@@ -230,7 +225,7 @@ diff -urN a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack
  	case IPPROTO_UDP:
  		seq_printf(s, "sport=%hu dport=%hu ",
  			   ntohs(tuple->src.u.udp.port),
-@@ -270,7 +269,6 @@
+@@ -270,7 +269,6 @@ static const char* l4proto_name(u16 prot
  	case IPPROTO_DCCP: return "dccp";
  	case IPPROTO_GRE: return "gre";
  	case IPPROTO_SCTP: return "sctp";
@@ -238,10 +233,9 @@ diff -urN a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack
  	case IPPROTO_ICMPV6: return "icmpv6";
  	}
  
-diff -urN a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
---- a/net/netfilter/nf_nat_core.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nf_nat_core.c	2026-06-21 16:10:09.244080283 +0800
-@@ -68,7 +68,6 @@
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -68,7 +68,6 @@ static void nf_nat_ipv4_decode_session(s
  		fl4->daddr = t->dst.u3.ip;
  		if (t->dst.protonum == IPPROTO_TCP ||
  		    t->dst.protonum == IPPROTO_UDP ||
@@ -249,7 +243,7 @@ diff -urN a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
  		    t->dst.protonum == IPPROTO_DCCP ||
  		    t->dst.protonum == IPPROTO_SCTP)
  			fl4->fl4_dport = t->dst.u.all;
-@@ -80,7 +79,6 @@
+@@ -80,7 +79,6 @@ static void nf_nat_ipv4_decode_session(s
  		fl4->saddr = t->src.u3.ip;
  		if (t->dst.protonum == IPPROTO_TCP ||
  		    t->dst.protonum == IPPROTO_UDP ||
@@ -257,7 +251,7 @@ diff -urN a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
  		    t->dst.protonum == IPPROTO_DCCP ||
  		    t->dst.protonum == IPPROTO_SCTP)
  			fl4->fl4_sport = t->src.u.all;
-@@ -101,7 +99,6 @@
+@@ -101,7 +99,6 @@ static void nf_nat_ipv6_decode_session(s
  		fl6->daddr = t->dst.u3.in6;
  		if (t->dst.protonum == IPPROTO_TCP ||
  		    t->dst.protonum == IPPROTO_UDP ||
@@ -265,7 +259,7 @@ diff -urN a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
  		    t->dst.protonum == IPPROTO_DCCP ||
  		    t->dst.protonum == IPPROTO_SCTP)
  			fl6->fl6_dport = t->dst.u.all;
-@@ -113,7 +110,6 @@
+@@ -113,7 +110,6 @@ static void nf_nat_ipv6_decode_session(s
  		fl6->saddr = t->src.u3.in6;
  		if (t->dst.protonum == IPPROTO_TCP ||
  		    t->dst.protonum == IPPROTO_UDP ||
@@ -273,10 +267,9 @@ diff -urN a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
  		    t->dst.protonum == IPPROTO_DCCP ||
  		    t->dst.protonum == IPPROTO_SCTP)
  			fl6->fl6_sport = t->src.u.all;
-diff -urN a/net/netfilter/nf_nat_proto.c b/net/netfilter/nf_nat_proto.c
---- a/net/netfilter/nf_nat_proto.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nf_nat_proto.c	2026-06-21 16:10:49.013893214 +0800
-@@ -78,23 +78,6 @@
+--- a/net/netfilter/nf_nat_proto.c
++++ b/net/netfilter/nf_nat_proto.c
+@@ -78,23 +78,6 @@ static bool udp_manip_pkt(struct sk_buff
  	return true;
  }
  
@@ -300,7 +293,7 @@ diff -urN a/net/netfilter/nf_nat_proto.c b/net/netfilter/nf_nat_proto.c
  static bool
  sctp_manip_pkt(struct sk_buff *skb,
  	       unsigned int iphdroff, unsigned int hdroff,
-@@ -325,10 +308,7 @@
+@@ -325,10 +308,7 @@ static bool l4proto_manip_pkt(struct sk_
  				     tuple, maniptype);
  	case IPPROTO_UDP:
  		return udp_manip_pkt(skb, iphdroff, hdroff,
@@ -312,10 +305,9 @@ diff -urN a/net/netfilter/nf_nat_proto.c b/net/netfilter/nf_nat_proto.c
  	case IPPROTO_SCTP:
  		return sctp_manip_pkt(skb, iphdroff, hdroff,
  				      tuple, maniptype);
-diff -urN a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttimeout.c
---- a/net/netfilter/nfnetlink_cttimeout.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nfnetlink_cttimeout.c	2026-06-21 16:11:06.563598727 +0800
-@@ -459,7 +459,6 @@
+--- a/net/netfilter/nfnetlink_cttimeout.c
++++ b/net/netfilter/nfnetlink_cttimeout.c
+@@ -459,7 +459,6 @@ static int cttimeout_default_get(struct
  		timeouts = nf_tcp_pernet(info->net)->timeouts;
  		break;
  	case IPPROTO_UDP:
@@ -323,10 +315,9 @@ diff -urN a/net/netfilter/nfnetlink_cttimeout.c b/net/netfilter/nfnetlink_cttime
  		timeouts = nf_udp_pernet(info->net)->timeouts;
  		break;
  	case IPPROTO_DCCP:
-diff -urN a/net/netfilter/nft_ct.c b/net/netfilter/nft_ct.c
---- a/net/netfilter/nft_ct.c	2026-06-19 19:39:44.000000000 +0800
-+++ b/net/netfilter/nft_ct.c	2026-06-21 16:11:18.957999296 +0800
-@@ -1278,7 +1278,6 @@
+--- a/net/netfilter/nft_ct.c
++++ b/net/netfilter/nft_ct.c
+@@ -1278,7 +1278,6 @@ static int nft_ct_expect_obj_init(const
  	switch (priv->l4proto) {
  	case IPPROTO_TCP:
  	case IPPROTO_UDP:
