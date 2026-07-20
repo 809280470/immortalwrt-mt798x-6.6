@@ -220,14 +220,15 @@ return view.extend({
 				}
 			}
 
-			return E('fieldset', { 'class': 'cbi-section' }, [
-				E('legend', {}, _('Acceleration Status')),
+			return E('div', { 'class': 'cbi-section' }, [
+				E('div', { 'class': 'cbi-section-title' }, _('Acceleration Status')),
 				E('table', { 'class': 'table', 'width': '100%', 'cellspacing': '10' }, acc_rows)
 			]);
 		}
 
-		/* Mark user edited */
+		/* Mark user edited (hidden section) */
 		s = m.section(form.NamedSection, 'global', 'turboacc');
+		s.render = function () { return E([]); };
 		o = s.option(form.HiddenValue, 'set');
 		o.load = (/* ... */) => { return 1 };
 		o.readonly = true;
