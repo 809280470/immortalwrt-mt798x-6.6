@@ -8,194 +8,196 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:91
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:213
 msgid "Acceleration Status"
 msgstr "加速状态"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:191
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:294
+msgid "Apply this setting after reboot."
+msgstr "重启后应用此项设置。"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:205
+msgid "Bind Entrys"
+msgstr "已绑定连接数"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:304
 msgid "Boardcom_FULLCONE_NAT"
 msgstr "Boardcom_FULLCONE_NAT(更低的CPU占用)"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:151
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:260
 msgid "Bridge Acceleration"
 msgstr "桥接加速"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:95
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:99
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:103
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:195
+msgid "CPU Usage"
+msgstr "CPU 使用率"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:180
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:184
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:188
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:192
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:196
 msgid "Collecting data..."
 msgstr "正在收集数据…"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:120
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:188
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:191
+msgid "Conntrack"
+msgstr "活动连接"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:229
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:303
 msgid "Disable"
 msgstr "禁用"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:57
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:115
 msgid "Disabled"
 msgstr "已禁用"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:159
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:268
 msgid "Enable IPv6 Acceleration."
 msgstr "启用 IPv6 加速。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:152
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:261
 msgid ""
 "Enable bridge acceleration (may be functional conflict with bridge-mode VPN "
 "server)."
 msgstr "启用桥接加速（可能会与桥接模式的 VPN 服务器冲突）。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:165
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:274
 msgid "Enable ethernet HNAT"
 msgstr "启用以太网 HNAT"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:171
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:280
 msgid "Enable ethernet IPv6 HNAT"
 msgstr "启用以太网 IPv6 HNAT"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:172
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:281
 msgid "Enable hardware offloading for wired IPv6 connections."
 msgstr "为有线 IPv6 连接启用硬件加速。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:183
-msgid "HNAT bind rate threshold (pps)"
-msgstr "HNAT连接速率绑定阈值(pps)"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:184
-msgid "The smaller the threshold, the easier it is for the connection to be accelerated."
-msgstr "阈值越小，连接越容易被加速。"
-
-
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:166
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:275
 msgid "Enable hardware offloading for wired connections."
 msgstr "为有线连接启用硬件加速。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:178
-msgid "Enable hardware offloading for wireless connections."
-msgstr "为无线连接启用硬件加速。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:177
-msgid "Enable wireless HNAT"
-msgstr "启用无线 HNAT"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:124
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:233
 msgid "Fast classifier"
 msgstr "Fast classifier"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:136
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:245
 msgid "Fast classifier connection manager for the shortcut forwarding engine."
 msgstr "快速转发引擎（SFE）的 fast classifier 连接管理器。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:94
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:179
 msgid "FastPath Engine"
 msgstr "快速转发引擎"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:118
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:227
 msgid "Fastpath engine"
 msgstr "快速转发引擎"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:122
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:231
 msgid "Flow offloading"
 msgstr "Flow offloading"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:98
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:183
 msgid "Full Cone NAT"
 msgstr "全锥形 NAT"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:186
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:301
 msgid "Full cone NAT"
 msgstr "全锥形 NAT"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:187
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:302
 msgid "Full cone NAT (NAT1) can improve gaming performance effectively."
 msgstr "Full cone NAT（NAT1）可以有效提升游戏体验。"
 
-#: applications/luci-app-turboacc/root/usr/share/rpcd/acl.d/luci-app-turboacc.json:3
+#: package/mtk/applications/luci-app-turboacc-mtk/root/usr/share/rpcd/acl.d/luci-app-turboacc.json:3
 msgid "Grant UCI access for luci-app-turboacc"
 msgstr "授予 luci-app-turboacc 访问 UCI 配置的权限。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:145
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:286
+msgid "HNAT bind rate threshold (pps)"
+msgstr "HNAT连接速率绑定阈值(pps)"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:254
 msgid "Hardware flow offloading"
 msgstr "硬件流量分载"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:158
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:267
 msgid "IPv6 acceleration"
 msgstr "IPv6 加速"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:128
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:237
 msgid "MediaTek HNAT"
 msgstr "MediaTek HNAT"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:140
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:249
 msgid "MediaTek's open source hardware offloading engine."
 msgstr "由联发科实现的开源硬件流量分载引擎。"
 
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:74
-msgid "Open source flow offloading engine (fast path or hardware NAT)."
-msgstr "开源流量分载引擎（快速转发或硬件 NAT）。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:179
-msgid "Redirect to wireless settings"
-msgstr "跳转到无线设置"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:146
-msgid "Requires hardware NAT support. Implemented at least for mt7621."
-msgstr "需要硬件 NAT 支持。目前 mt7621 已实现。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:126
-msgid "SFE connection manager"
-msgstr "SFE connection manager"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:138
-msgid "Simple connection manager for the shortcut forwarding engine."
-msgstr "快速转发引擎（SFE）的简单连接管理器。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:134
-msgid "Software based offloading for routing/NAT."
-msgstr "基于软件的 路由/NAT 分载。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:102
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:195
-msgid "TCP CCA"
-msgstr "TCP 拥塞控制算法"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:196
-msgid "TCP congestion control algorithm."
-msgstr "TCP 拥塞控制算法。"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:119
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:142
-msgid "The offloading engine for routing/NAT."
-msgstr "用于 路由/NAT 的分载引擎。"
-
-#: applications/luci-app-turboacc/root/usr/share/luci/menu.d/luci-app-turboacc.json:3
-msgid "TurboACC"
-msgstr "网络加速"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:73
-msgid "TurboACC settings"
-msgstr "网络加速设置"
-
-#: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:190
-msgid "XT_FULLCONE_NAT"
-msgstr "XT_FULLCONE_NAT(更佳的兼容性)"
-
-msgid "Apply this setting after reboot."
-msgstr "重启后应用此项设置。"
-
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:293
 msgid "Number of HNAT PPE"
 msgstr "HNAT PPE数量"
 
-msgid "Bind Entrys"
-msgstr "已绑定连接数"
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:134
+msgid "Open source flow offloading engine (fast path or hardware NAT)."
+msgstr "开源流量分载引擎（快速转发或硬件 NAT）。"
 
-msgid "Conntrack"
-msgstr "活动连接"
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:255
+msgid "Requires hardware NAT support. Implemented at least for mt7621."
+msgstr "需要硬件 NAT 支持。目前 mt7621 已实现。"
 
-msgid "Conntrack Entrys"
-msgstr "活动连接数"
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:235
+msgid "SFE connection manager"
+msgstr "SFE connection manager"
 
-msgid "CPU Usage"
-msgstr "CPU 使用率"
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:247
+msgid "Simple connection manager for the shortcut forwarding engine."
+msgstr "快速转发引擎（SFE）的简单连接管理器。"
 
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:243
+msgid "Software based offloading for routing/NAT."
+msgstr "基于软件的 路由/NAT 分载。"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:187
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:308
+msgid "TCP CCA"
+msgstr "TCP 拥塞控制算法"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:309
+msgid "TCP congestion control algorithm."
+msgstr "TCP 拥塞控制算法。"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:228
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:251
+msgid "The offloading engine for routing/NAT."
+msgstr "用于 路由/NAT 的分载引擎。"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:287
+msgid ""
+"The smaller the threshold, the easier it is for the connection to be "
+"accelerated."
+msgstr "阈值越小，连接越容易被加速。"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/root/usr/share/luci/menu.d/luci-app-turboacc.json:3
+msgid "TurboACC"
+msgstr "网络加速"
+
+#: package/mtk/applications/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:133
+msgid "TurboACC settings"
+msgstr "网络加速设置"
+
+#~ msgid "Enable hardware offloading for wireless connections."
+#~ msgstr "为无线连接启用硬件加速。"
+
+#~ msgid "Enable wireless HNAT"
+#~ msgstr "启用无线 HNAT"
+
+#~ msgid "Redirect to wireless settings"
+#~ msgstr "跳转到无线设置"
+
+#~ msgid "XT_FULLCONE_NAT"
+#~ msgstr "XT_FULLCONE_NAT(更佳的兼容性)"
+
+#~ msgid "Conntrack Entrys"
+#~ msgstr "活动连接数"
