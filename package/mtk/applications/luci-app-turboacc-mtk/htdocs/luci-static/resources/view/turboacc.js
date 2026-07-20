@@ -38,20 +38,6 @@ var getMTKPPEStat = rpc.declare({
 	expect: { '': {} }
 });
 
-function getServiceStatus() {
-	return Promise.all([
-		L.resolveDefault(getFastPathStat(), {}),
-		L.resolveDefault(getFullConeStat(), {}),
-		L.resolveDefault(getTCPCCAStat(), {})
-	]);
-}
-
-function getMTKPPEStatus() {
-	return Promise.all([
-		L.resolveDefault(getMTKPPEStat(), {})
-	]);
-}
-
 function progressbar(value, max, byte) {
 	var vn = parseInt(value) || 0,
 		mn = parseInt(max) || 100,
@@ -69,12 +55,10 @@ function formatCPUUsage(stats) {
 	var text = stats.CPU_USED || '0%';
 
 	if (stats.CPU_CORES_USED) {
-		// If backend provided an ordered array, use it directly
 		if (Array.isArray(stats.CPU_CORES_USED)) {
 			if (stats.CPU_CORES_USED.length > 0)
 				text += ' (' + stats.CPU_CORES_USED.join(', ') + ')';
 		} else {
-			// Otherwise fallback to object: collect keys, sort by numeric CPU index
 			var cores = [];
 			for (var core in stats.CPU_CORES_USED) {
 				if (stats.CPU_CORES_USED.hasOwnProperty(core))
@@ -121,7 +105,10 @@ return view.extend({
 		return Promise.all([
 			uci.load('turboacc'),
 			L.resolveDefault(getSystemFeatures(), {}),
-			L.resolveDefault(getMTKPPEStat(), {})
+			L.resolveDefault(getMTKPPEStat(), {}),
+			L.resolveDefault(getFastPathStat(), {}),
+			L.resolveDefault(getFullConeStat(), {}),
+			L.resolveDefault(getTCPCCAStat(), {})
 		]);
 	},
 
@@ -129,6 +116,7 @@ return view.extend({
 		var m, s, o;
 		var features = data[1];
 		var ppe_stats = data[2];
+		var svc_stats  = [ data[3], data[4], data[5] ];
 
 		m = new form.Map('turboacc', _('TurboACC settings'),
 			_('Open source flow offloading engine (fast path or hardware NAT).'));
@@ -136,29 +124,30 @@ return view.extend({
 		s = m.section(form.TypedSection);
 		s.anonymous = true;
 		s.render = function () {
+			/* ---- single unified poll: status + ppe/cpu/conntrack ---- */
 			poll.add(function () {
-				return L.resolveDefault(getServiceStatus()).then(function (res) {
-					var stats = renderStatus(res);
+				return Promise.all([
+					L.resolveDefault(getFastPathStat(), {}),
+					L.resolveDefault(getFullConeStat(), {}),
+					L.resolveDefault(getTCPCCAStat(), {}),
+					L.resolveDefault(getMTKPPEStat(), {})
+				]).then(function (res) {
+					var svc = [res[0], res[1], res[2]];
+					var stats = renderStatus(svc);
 					var tds = [ 'fastpath_state', 'fullcone_state', 'tcpcca_state' ];
 					for (var i in tds) {
 						var view = document.getElementById(tds[i]);
-						if (view)
-							view.innerHTML = stats[i];
+						if (view) view.innerHTML = stats[i];
 					}
-				});
-			});
 
-			poll.add(function () {
-				return L.resolveDefault(getMTKPPEStatus()).then(function (res) {
-					var stat = res[0] || {};
+					var stat = res[3] || {};
 					var ppe_num = parseInt(stat.PPE_NUM);
-
 					if (!isNaN(ppe_num)) {
 						for (var i = 0; i < ppe_num; i++) {
-							var ppe_bar = document.getElementById(`ppe${i}_entry`);
+							var ppe_bar = document.getElementById('ppe' + i + '_entry');
 							if (ppe_bar)
 								ppe_bar.innerHTML = E('td', {},
-									progressbar(stat[`BIND_PPE${i}`], stat[`ALL_PPE${i}`])).innerHTML;
+									progressbar(stat['BIND_PPE' + i], stat['ALL_PPE' + i])).innerHTML;
 						}
 					}
 
@@ -172,46 +161,68 @@ return view.extend({
 					if (cpu_bar)
 						cpu_bar.innerHTML = E('em', {}, formatCPUUsage(stat)).innerHTML;
 				});
-			}, 3);
+			}, 2);
 
-			var acc_status = E('table', { 'class': 'table', 'width': '100%', 'cellspacing': '10' }, [
+			/* ---- initial render helpers ---- */
+			function ppe_bar_html(stats, idx) {
+				return progressbar(stats['BIND_PPE' + idx], stats['ALL_PPE' + idx]);
+			}
+			function ct_bar_html(stats) {
+				if (!stats.Conntrack_Count) return E('em', {}, _('Collecting data...'));
+				return progressbar(parseInt(stats.Conntrack_Count), parseInt(stats.Conntrack_Max));
+			}
+			function cpu_html(stats) {
+				if (!stats.CPU_USED) return E('em', {}, _('Collecting data...'));
+				return formatCPUUsage(stats);
+			}
+			var hasPPE = ppe_stats.hasOwnProperty('PPE_NUM');
+
+			/* ---- build table rows ---- */
+			var acc_rows = [
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('FastPath Engine')),
-					E('td', { 'id': 'fastpath_state' }, E('em', {}, _('Collecting data...')))
+					E('td', { 'id': 'fastpath_state' },
+						svc_stats[0] && svc_stats[0].type
+							? renderStatus(svc_stats)[0]
+							: E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('Full Cone NAT')),
-					E('td', { 'id': 'fullcone_state' }, E('em', {}, _('Collecting data...')))
+					E('td', { 'id': 'fullcone_state' },
+						svc_stats[1] && svc_stats[1].type
+							? renderStatus(svc_stats)[1]
+							: E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('TCP CCA')),
-					E('td', { 'id': 'tcpcca_state' }, E('em', {}, _('Collecting data...')))
+					E('td', { 'id': 'tcpcca_state' },
+						svc_stats[2] && svc_stats[2].type
+							? renderStatus(svc_stats)[2]
+							: E('em', {}, _('Collecting data...')))
 				]),
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('Conntrack')),
-					E('td', { 'id': 'conntrack_state' }, E('em', {}, _('Collecting data...')))
+					E('td', { 'id': 'conntrack_state' }, ct_bar_html(ppe_stats))
 				]),
 				E('tr', {}, [
 					E('td', { 'width': '33%' }, _('CPU Usage')),
-					E('td', { 'id': 'cpu_usage_state' }, E('em', {}, _('Collecting data...')))
+					E('td', { 'id': 'cpu_usage_state' }, cpu_html(ppe_stats))
 				])
-			]);
+			];
 
-			if (ppe_stats.hasOwnProperty('PPE_NUM')) {
+			if (hasPPE) {
 				var ppe_num = parseInt(ppe_stats.PPE_NUM);
-
-				for (var i=0; i<ppe_num; i++) {
-					acc_status.appendChild(E('tr', {}, [
-						E('td', { 'width': '33%' }, `PPE${i} ` + _('Bind Entrys')),
-						E('td', {'id': `ppe${i}_entry` },
-						progressbar(ppe_stats[`BIND_PPE${i}`], ppe_stats[`ALL_PPE${i}`]))
+				for (var i = 0; i < ppe_num; i++) {
+					acc_rows.push(E('tr', {}, [
+						E('td', { 'width': '33%' }, 'PPE' + i + ' ' + _('Bind Entrys')),
+						E('td', { 'id': 'ppe' + i + '_entry' }, ppe_bar_html(ppe_stats, i))
 					]));
 				}
 			}
 
 			return E('fieldset', { 'class': 'cbi-section' }, [
 				E('legend', {}, _('Acceleration Status')),
-				acc_status
+				E('table', { 'class': 'table', 'width': '100%', 'cellspacing': '10' }, acc_rows)
 			]);
 		}
 

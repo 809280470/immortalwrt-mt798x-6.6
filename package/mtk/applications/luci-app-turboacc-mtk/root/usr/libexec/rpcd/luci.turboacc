@@ -35,109 +35,95 @@ local function save_cache(cache)
 	end
 end
 
-local function get_cpu_usage_all()
-	local function read_stats_once()
-		local fd = io.open("/proc/stat", "r")
-		if not fd then
-			return nil
-		end
+local function read_cpu_stats()
+	local fd = io.open("/proc/stat", "r")
+	if not fd then return nil end
 
-		local result = {
-			total = nil,
-			cores = {}
-		}
-
-		for line in fd:lines() do
-			if not result.total then
-				local user, nice, sys, idle, iowait, irq, softirq, steal, guest, guest_nice =
-					string.match(line, "^cpu%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
-				if user then
-					local total = tonumber(user) + tonumber(nice) + tonumber(sys) +
+	local result = { total = nil, cores = {} }
+	for line in fd:lines() do
+		if not result.total then
+			local user, nice, sys, idle, iowait, irq, softirq, steal, guest, guest_nice =
+				string.match(line, "^cpu%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
+			if user then
+				result.total = {
+					total = tonumber(user) + tonumber(nice) + tonumber(sys) +
 						tonumber(idle) + tonumber(iowait) + tonumber(irq) +
-						tonumber(softirq) + tonumber(steal) + tonumber(guest) + tonumber(guest_nice)
-					local idle_total = tonumber(idle) + tonumber(iowait)
-					result.total = { total = total, idle = idle_total }
-				end
-			else
-				local core_id = string.match(line, "^cpu(%d+)%s+")
-				if core_id then
-					local user, nice, sys, idle, iowait, irq, softirq, steal, guest, guest_nice =
-						string.match(line, "^cpu%d+%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
-					if user then
-						local total = tonumber(user) + tonumber(nice) + tonumber(sys) +
+						tonumber(softirq) + tonumber(steal) + tonumber(guest) + tonumber(guest_nice),
+					idle  = tonumber(idle) + tonumber(iowait)
+				}
+			end
+		else
+			local core_id = string.match(line, "^cpu(%d+)%s+")
+			if core_id then
+				local user, nice, sys, idle, iowait, irq, softirq, steal, guest, guest_nice =
+					string.match(line, "^cpu%d+%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)%s+(%d+)")
+				if user then
+					result.cores[core_id] = {
+						total = tonumber(user) + tonumber(nice) + tonumber(sys) +
 							tonumber(idle) + tonumber(iowait) + tonumber(irq) +
-							tonumber(softirq) + tonumber(steal) + tonumber(guest) + tonumber(guest_nice)
-						local idle_total = tonumber(idle) + tonumber(iowait)
-						result.cores[core_id] = { total = total, idle = idle_total }
-					end
+							tonumber(softirq) + tonumber(steal) + tonumber(guest) + tonumber(guest_nice),
+						idle  = tonumber(idle) + tonumber(iowait)
+					}
 				end
 			end
 		end
-
-		fd:close()
-		return result.total and result or nil
 	end
+	fd:close()
+	return result.total and result or nil
+end
 
-	local last_stats = load_cache()
-	local current = read_stats_once()
-	if not current then
-		return { total_usage = "0%", core_usage = {} }
-	end
+local function calc_cpu_delta(prev, curr)
+	local result = { total_usage = "0%", core_usage = {} }
+	if not prev or not curr then return result end
 
-	local result = {
-		total_usage = "0%",
-		core_usage = {}
-	}
-
-	if last_stats.total then
-		local total_diff = current.total.total - last_stats.total.total
-		local idle_diff = current.total.idle - last_stats.total.idle
-		if total_diff ~= 0 then
-			local usage = 100 * (total_diff - idle_diff) / total_diff
-			result.total_usage = string.format("%.1f%%", usage)
+	if prev.total then
+		local td = curr.total.total - prev.total.total
+		if td > 0 then
+			result.total_usage = string.format("%.1f%%",
+				100 * (td - (curr.total.idle - prev.total.idle)) / td)
 		end
 	end
-	last_stats.total = current.total
 
-	-- Sort core IDs to ensure consistent order (CPU0, CPU1, CPU2, ...)
 	local core_ids = {}
-	for core_id, _ in pairs(current.cores) do
-		table.insert(core_ids, tonumber(core_id))
-	end
+	for k in pairs(curr.cores) do table.insert(core_ids, tonumber(k)) end
 	table.sort(core_ids)
 
-	for _, core_id_num in ipairs(core_ids) do
-		local core_id = tostring(core_id_num)
-		local core_current = current.cores[core_id]
-		local core_last = last_stats.cores[core_id]
-		if not core_last then
-			result.core_usage[string.format("CPU%d", core_id)] = "0%"
-		else
-			local total_diff = core_current.total - core_last.total
-			local idle_diff = core_current.idle - core_last.idle
-			if total_diff == 0 then
-				result.core_usage[string.format("CPU%d", core_id)] = "0%"
+	for _, id in ipairs(core_ids) do
+		local cid = tostring(id)
+		local label = string.format("CPU%d", id)
+		local cc, pc = curr.cores[cid], prev and prev.cores and prev.cores[cid]
+		if cc and pc then
+			local td = cc.total - pc.total
+			if td > 0 then
+				result.core_usage[label] = string.format("%.1f%%", 100 * (td - (cc.idle - pc.idle)) / td)
 			else
-				local usage = 100 * (total_diff - idle_diff) / total_diff
-				result.core_usage[string.format("CPU%d", core_id)] = string.format("%.1f%%", usage)
+				result.core_usage[label] = "0%"
 			end
+		else
+			result.core_usage[label] = "0%"
 		end
-		last_stats.cores[core_id] = core_current
 	end
-
-	-- Also produce an ordered array of core usage strings for stable JSON order
-	local core_order = {}
-	for _, core_id_num in ipairs(core_ids) do
-		local cid = tostring(core_id_num)
-		local label = string.format("CPU%d", core_id_num)
-		local usage = result.core_usage[label] or "0%"
-		table.insert(core_order, label ..": ".. usage)
-	end
-
-	result.core_order = core_order
-
-	save_cache(last_stats)
 	return result
+end
+
+local function get_cpu_usage_all()
+	local v1 = read_cpu_stats()
+	if not v1 then return { total_usage = "0%", core_usage = {} } end
+
+	local last = load_cache()
+	-- fast path: use previous sample cached at least 200ms ago
+	if last.total then
+		local delta = calc_cpu_delta(last, v1)
+		save_cache(v1)
+		return delta
+	end
+
+	-- slow path (first call): take two samples 200ms apart for instant result
+	local nixio = require "nixio"
+	nixio.nanosleep(0, 200000000)
+	local v2 = read_cpu_stats()
+	save_cache(v2 or v1)
+	return calc_cpu_delta(v1, v2 or v1)
 end
 
 local methods = {
