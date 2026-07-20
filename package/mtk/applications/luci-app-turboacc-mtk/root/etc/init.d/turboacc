@@ -80,8 +80,10 @@ start_service() {
     echo 3 > /proc/sys/vm/drop_caches
 
 	# Wget IPv4 only
-    sed -i '/prefer-family/d' /etc/wgetrc
-    echo "prefer-family = IPv4" >> /etc/wgetrc
+	if [ -f /etc/wgetrc ]; then
+		sed -i '/prefer-family/d' /etc/wgetrc
+	fi
+	echo "prefer-family = IPv4" >> /etc/wgetrc
 }
 
 reload_service() {
