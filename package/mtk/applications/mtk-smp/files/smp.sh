@@ -2,7 +2,7 @@
 
 OPTIMIZED_FOR="$1"
 CPU_LIST=`cat /proc/interrupts | sed -n '1p'`
-NUM_OF_CPU=0; for i in $CPU_LIST; do NUM_OF_CPU=`expr $NUM_OF_CPU + 1`; done;
+NUM_OF_CPU=0; for i in $CPU_LIST; do NUM_OF_CPU=$((NUM_OF_CPU + 1)); done;
 DEFAULT_RPS=0
 
 . /lib/functions.sh
@@ -561,7 +561,7 @@ gen_vifs_to_rps_if()
 
 		dbg2 "\$$vif$i=$prefix$i"
 
-		i=`expr $i + 1`
+		i=$((i + 1))
 	done
 }
 
@@ -657,15 +657,15 @@ scan_wifi_num()
 {
 	NUM_OF_WIFI=0
 	if [ -n "$wifi1" -a -d "/sys/class/net/$wifi1" ]; then
-		NUM_OF_WIFI=`expr $NUM_OF_WIFI + 1`
+		NUM_OF_WIFI=$((NUM_OF_WIFI + 1))
 	fi
 
 	if [ -n "$wifi2" -a -d "/sys/class/net/$wifi2" ];then
-		NUM_OF_WIFI=`expr $NUM_OF_WIFI + 1`
+		NUM_OF_WIFI=$((NUM_OF_WIFI + 1))
 	fi
 
 	if [ -n "$wifi3" -a -d "/sys/class/net/$wifi3" ];then
-		NUM_OF_WIFI=`expr $NUM_OF_WIFI + 1`
+		NUM_OF_WIFI=$((NUM_OF_WIFI + 1))
 	fi
 
 	dbg "# NUM_OF_WIFI=$NUM_OF_WIFI band(s)"
@@ -701,23 +701,21 @@ get_wifi_num()
 #   -1: if the module does not exist.
 module_exist()
 {
-	mpath="/lib/modules/`uname -r`"
+	mpath="/lib/modules/$(uname -r)"
 	retval=-1
 
-	mod_in_lib=`find $mpath -name "$1".ko > /dev/null 2>&1`
-	#echo "find $mpath -name "$1".ko" > /dev/console
-	if [ ! -z $mod_in_lib ]; then
+	if find "$mpath" -name "$1.ko" 2>/dev/null | grep -q .; then
 		retval=0
 	fi
 
 	# TODO find out a way in OpenWRT
-	mod_builtin=`grep $1 $mpath/modules.builtin 2>/dev/null`
-	if [ ! -z "$mod_builtin" ]; then
+	mod_builtin=$(grep "$1" "$mpath/modules.builtin" 2>/dev/null)
+	if [ -n "$mod_builtin" ]; then
 		retval=1
 	fi
 
-	mod_inserted=`lsmod | grep $1 2>/dev/null`
-	if [ ! -z "$mod_inserted" ]; then
+	mod_inserted=$(lsmod | grep "$1" 2>/dev/null)
+	if [ -n "$mod_inserted" ]; then
 		retval=1
 	fi
 
@@ -780,7 +778,7 @@ setup_model()
 
 get_virtual_irq()
 {
-	PHY_POS=`expr $NUM_OF_CPU + 3` #physical irq # position in /proc/interrups may vary with the number of CPU up
+	PHY_POS=$((NUM_OF_CPU + 3)) #physical irq # position in /proc/interrups may vary with the number of CPU up
 	target_phy_irq=$1
 	cat /proc/interrupts | sed 's/:/ /g'| awk '$1 ~ /^[0-9]+$/' | while read line 
 	do
@@ -810,12 +808,12 @@ set_rps_cpu_bitmap()
 			if [ -z "$ifval" ]; then
 				eval $var=$cpu_bit
 			else
-				eval $var=`expr $ifval + $cpu_bit`
+				eval $var=$(($ifval + $cpu_bit))
 			fi
 			eval ifval=\$$var
 			dbg2 "[rps val after]$i=$ifval"
 		done
-		num=`expr $num + 1`
+		num=$(($num + 1))
 	done
 }
 
@@ -827,11 +825,11 @@ set_rps_cpus()
 		var=${VAR_PREFIX}_${i//-/_}
 		eval cpu_map=\$$var
 		if [ -d /sys/class/net/$i ]; then
-			if [ ! -z $cpu_map ]; then
-				cpu_map=`printf '%x' $cpu_map`
+			if [ -n "$cpu_map" ]; then
+				cpu_map=$(printf '%x' "$cpu_map")
 				dbg "echo $cpu_map > /sys/class/net/$i/queues/rx-0/rps_cpus"
 				echo $cpu_map > /sys/class/net/$i/queues/rx-0/rps_cpus
-			elif [ ! -z $1 ]; then
+			elif [ -n "$1" ]; then
 				dbg "echo $1 > /sys/class/net/$i/queues/rx-0/rps_cpus"
 				echo $1 > /sys/class/net/$i/queues/rx-0/rps_cpus
 			fi
@@ -843,8 +841,9 @@ disable_gro_fraglist()
 {
 	for iface in /sys/class/net/*; do
 		iface=$(basename "$iface")
-		if ethtool -k "$iface" | grep -q "rx-gro-list"; then
-			ethtool -K "$iface" rx-gro-list off
+		[ -d "/sys/class/net/$iface/device" ] || continue
+		if ethtool -k "$iface" 2>/dev/null | grep -q "rx-gro-list"; then
+			ethtool -K "$iface" rx-gro-list off 2>/dev/null
 		fi
 	done
 }
@@ -859,12 +858,12 @@ set_smp_affinity()
 			cpu_bit=$((2 ** $num))
 			virq=$(get_virtual_irq $i)
 			dbg2 "irq p2v $i --> $virq"
-			if [ ! -z $virq ] && [ -d /proc/irq/$virq ]; then
+			if [ -n "$virq" ] && [ -d "/proc/irq/$virq" ]; then
 				dbg "echo $cpu_bit > /proc/irq/$virq/smp_affinity"
 				echo $cpu_bit > /proc/irq/$virq/smp_affinity
 			fi
 		done
-		num=`expr $num + 1`
+		num=$(($num + 1))
 	done
 }
 
