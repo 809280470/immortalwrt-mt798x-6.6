@@ -59,8 +59,7 @@
 	],
 	"@GNOME": [
 		"https://mirror.nju.edu.cn/gnome",
-		"https://download.gnome.org/sources",
-		"https://mirror.csclub.uwaterloo.ca/gnome/sources"
+		"https://download.gnome.org/sources"
 	],
 	"@OPENWRT": [
 		"https://sources.cdn.openwrt.org",
